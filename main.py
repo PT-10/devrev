@@ -35,6 +35,3 @@ def predict(message, history):
             partial_message = partial_message + \
                 chunk
             yield partial_message
-
-
-gr.ChatInterface(predict).queue().launch()

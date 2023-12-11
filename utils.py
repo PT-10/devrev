@@ -17,13 +17,6 @@ def get_completion_from_messages(messages, model=GPT_model, temperature=0, max_t
     return response.choices[0].message.content
 
 def CoT_Prompting(history):
-    # messages_cot_1 =  [  
-    # {'role':'system', 
-    #  'content': agent_system},
-    # {'role':'user',
-    # 'content': f"{query}"}
-    # ]
-    # history.append({'role':'user', 'content': f"{query}"})
     response = get_completion_from_messages(history)
     if(response == '[]'):
         print("[]")
@@ -56,5 +49,3 @@ def CoT_Prompting(history):
     )
     response_3 = get_completion_from_messages(history)
     return response_3
-    # print(response_3)
-   
