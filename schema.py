@@ -153,17 +153,30 @@ tools = {
 
 
 tool_info = json.dumps(obj=tools,indent=1)
-output_schema = '''[
-    {
-    "tool_name":"function_name",
-    "arguments":[
-        {
-            "argument_name":"",
-            "argument_value":""
-        }
-    ],
-    },
-]'''
+output_schema = '''{
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "tool_name": {"type": "string"},
+            "arguments": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "argument_name": {"type": "string"},
+                        "argument_value": {"type": "string"}
+                    },
+                    "required": ["argument_name", "argument_value"]
+                }
+            },
+            "return_label": {"type": "string"},
+            "return_description": {"type": "string"},
+            "return_type": {"type": "string"},
+        },
+        "required": ["tool_name", "arguments", "tool_returned_label", "tool_returned_description", "tool_returned_data_type"]
+    }
+}'''
 
 
 agent_system = f"""
