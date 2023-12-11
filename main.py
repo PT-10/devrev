@@ -1,6 +1,5 @@
 from schema import agent_system
 from utils import CoT_Prompting
-import gradio as gr
 
 def predict(message, history):
     history_openai_format = [{
@@ -29,6 +28,8 @@ def predict(message, history):
         }
     )
     response = CoT_Prompting(history_openai_format)
+    # print(tool_info)
+    # print(history_openai_format)
     partial_message = ""
     for chunk in response:
         if chunk is not None:
