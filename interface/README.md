@@ -54,12 +54,13 @@ The interface has 4 tabs, each serving a different purpose.
 ## Structure
 ```
 interface
-└── interface.py
-└── main.py
-└── schema.py
-└── tooladder.py
-└── tools.json
-└── schema.py
+    └── interface.py
+    └── main.py
+    └── schema.py
+    └── tooladder.py
+    └── tools.json
+    └── utils.py
+    └── README.md
 ```
 1. `interface.py`: 
 This script provides a user interface for managing tools. It includes functions for adding, deleting, and updating tools.
@@ -73,3 +74,5 @@ This script provides the Tool and Argument classes.
 This JSON file stores the information about the tools. It is updated whenever a tool is added, deleted, or updated.
 6. `utils.py`:
 This script provides utility functions that are used across the interface scripts.
+
+
