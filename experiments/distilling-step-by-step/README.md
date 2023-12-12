@@ -14,7 +14,7 @@ Follow these steps to run inference from the distilled Google's T5 version 1.1:
 4. Now install the dependencies.
 `pip install -r -requirements.txt`
 
-5. Download the checkpoint folder from [here](https://drive.google.com/drive/folders/1PN4vQwDaYOovtmhZn0jYkdxaEzx65TqR?usp=sharing).
+5. Download the checkpoint folder from [here](https://drive.google.com/drive/folders/1BqhyqOcJetBq4fnJAJOpdam2EJwTAdM6?usp=sharing).
 
 6. Update the *checkpoint_path* variable in *inference.py* file to the actual path of the checkpoint.
 
