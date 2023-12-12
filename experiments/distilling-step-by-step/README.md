@@ -1,4 +1,4 @@
-##Running Inference from the distilled Google's T5 version 1.1
+## Running Inference from the distilled Google's T5 version 1.1
 
 Follow these steps to run inference from the distilled Google's T5 version 1.1:
 
@@ -25,7 +25,7 @@ Follow these steps to run inference from the distilled Google's T5 version 1.1:
 
 9. Now you can see the output in the terminal window.
 
-##Re-distilling the Google's T5 version 1.1 model with GPT-4 labels and rationales
+## Re-distilling the Google's T5 version 1.1 model with GPT-4 labels and rationales
 
 Follow these steps to re-distill the model:
 
