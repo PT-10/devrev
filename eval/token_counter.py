@@ -1,4 +1,4 @@
-# let's verify the function above matches the OpenAI API response
+#Verify the function above matches the OpenAI API response
 
 import openai
 import tiktoken
