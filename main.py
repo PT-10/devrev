@@ -1,5 +1,24 @@
 from schema import agent_system
 from utils import CoT_Prompting
+from schema import tool_info
+
+def reset_history(tool_info):
+    global history_openai_format
+    global agent_system
+    history_openai_format = [{
+        'role': 'system', 
+        'content': agent_system
+    }]
+    agent_system = f"""
+You are a function calling agent.You will be given a query.\
+If the query is not relevant to the tools, return an empty python list.\
+You have to think step by step five times to answer the queries.\ 
+
+The functions are given below in JSON format.\
+
+{tool_info}
+"""
+
 
 def predict(message, history):
     history_openai_format = [{

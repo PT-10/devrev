@@ -1,7 +1,7 @@
 import json
 import gradio as gr
 from tooladder import Tool, Argument
-from main import predict
+from main import predict, reset_history
 from schema import tool_info
 
 def add_tool(toolName, desc):
@@ -18,6 +18,7 @@ def add_tool(toolName, desc):
         "arguments": []
     }
     update_json()
+    reset_history(tool_info)
     return json.dumps(tool_info, indent=4)
 
 def add_argument(toolName, argName, argDesc, argType, argExample):
@@ -44,7 +45,8 @@ def add_argument(toolName, argName, argDesc, argType, argExample):
         "example": new_arg.arg_example
     })
     update_json()
-    return json.dumps(tool_info[toolName], indent=4)
+    reset_history(tool_info)
+    return json.dumps(tool_info, indent=4)
 
 def delete_tool(toolName):
     if toolName not in tool_info:
@@ -52,6 +54,7 @@ def delete_tool(toolName):
 
     tool_info.pop(toolName)
     update_json()
+    reset_history(tool_info)
     return json.dumps(tool_info, indent=4)
 
 def update_json():
@@ -68,16 +71,16 @@ def delete_argument(toolName, argName):
         if arg["name"] == argName:
             del arguments[i]
             update_json()
-            return json.dumps(tool_info[toolName], indent=4)
-    
+            return json.dumps(tool_info, indent=4)
+    reset_history(tool_info)    
     return f"Argument '{argName}' not found in tool '{toolName}'."
 
 def modify_tool(toolName, newToolName):
     if toolName not in tool_info:
         return "Tool with the given name does not exist. Choose a different name."
     
-    if newToolName not in tool_info:
-        return "Tool with the given name does not exist. Choose a different name."
+    if newToolName in tool_info:
+        return "Tool with the given name exists. Choose a different name."
 
     if newToolName == "":
         return "New tool name cannot be empty."
@@ -91,7 +94,8 @@ def modify_tool(toolName, newToolName):
     # Add the modified tool with the new name
     tool_info[newToolName] = existing_tool
     update_json()
-    return json.dumps(tool_info[newToolName], indent=4)
+    reset_history(tool_info)
+    return json.dumps(tool_info, indent=4)
 
 
 def modify_argument(toolName, argName, newArgName, argDesc, argType, argExample):
@@ -108,8 +112,8 @@ def modify_argument(toolName, argName, newArgName, argDesc, argType, argExample)
             arg["example"] = argExample if argExample else arg["example"]
 
             update_json()
-            return json.dumps(tool_info[toolName], indent=4)
-
+            return json.dumps(tool_info, indent=4)
+    reset_history(tool_info)
     return f"Argument '{argName}' not found in tool '{toolName}'."
   
 def view_tools():
@@ -158,7 +162,7 @@ with gr.Blocks() as demo:
             """)
         modify_tool_components = [gr.Textbox(label="Tool Name to be Modified"),
                                   gr.Textbox(label="New Tool Name")]
-        modify_tool_output = gr.Textbox(value="", label="Output")
+        modify_tool_output = gr.Textbox(label="Output")
         gr.Interface(modify_tool, inputs=modify_tool_components, outputs=[modify_tool_output])
 
         modify_arg_components = [gr.Textbox(label="Tool Name"),
@@ -167,7 +171,7 @@ with gr.Blocks() as demo:
                                  gr.Textbox(label="Argument Description (leave empty to keep the same)"),
                                  gr.Textbox(label="Argument Type (leave empty to keep the same)"),
                                  gr.Textbox(label="Argument Example (leave empty to keep the same)")]
-        modify_arg_output = gr.Textbox(value="", label="Output")
+        modify_arg_output = gr.Textbox(label="Output")
         gr.Interface(modify_argument, inputs=modify_arg_components, outputs=[modify_arg_output])
 
 
