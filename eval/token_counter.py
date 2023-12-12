@@ -102,7 +102,7 @@ if __name__ == "__main__":
             model=model,
             messages=example_messages,
             temperature=0,
-            max_tokens=1,  # we're only counting input tokens here, so let's not waste tokens on the output
+            max_tokens=1,  # we're only counting input tokens here
         )
         # print(dir(response.usage))
         print(f'{response.usage.prompt_tokens} prompt tokens counted by the OpenAI API.')
