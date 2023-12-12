@@ -1,0 +1,2137 @@
+[
+    {
+        "Query": "I need to create tasks from a meeting notes text and then add those tasks to the current sprint.",
+        "Output": [
+                        {
+                            "tool_name": "create_actionable_tasks_from_text",
+                            "arguments": [
+                                {
+                                    "argument_name": "text",
+                                    "argument_value": "Discuss integration with client's API, finalize the Q2 roadmap, and update the risk log."
+                                }
+                            ]
+                        },
+                        {
+                            "tool_name": "add_work_items_to_sprint",
+                            "arguments": [
+                                {
+                                    "argument_name": "work_ids",
+                                    "argument_value": "$$PREV[0]"
+                                },
+                                {
+                                    "argument_name": "sprint_id",
+                                    "argument_value": "$$PREV[1]"
+                                }
+                            ]
+                        },
+                        {
+                            "tool_name": "get_sprint_id",
+                            "arguments": []
+                        }
+        ],
+        "Reasoning": "Since I am starting with meeting notes that need to turn into actionable tasks, the \"create_actionable_tasks_from_text\" tool will generate those tasks. Then, I'll need the current sprint ID, which \"get_sprint_id\" provides. Finally, using \"add_work_items_to_sprint\", I can add the newly created tasks to the current sprint."
+    },
+
+    {
+        "Query": "I want to find out who I am in the system and then find the high priority issues created by me.",
+        "Output": [
+                        {
+                            "tool_name": "who_am_i",
+                            "arguments": []
+                        },
+                        {
+                            "tool_name": "works_list",
+                            "arguments": [
+                                {
+                                    "argument_name": "created_by",
+                                    "argument_value": "$$PREV[0]"
+                                },
+                                {
+                                    "argument_name": "issue.priority",
+                                    "argument_value": ["p0", "p1"]
+                                },
+                                {
+                                    "argument_name": "type",
+                                    "argument_value": ["issue"]
+                                }
+                            ]
+                        }
+        ],
+        "Reasoning": "To list the issues created by myself with high priority, I need to identify my user ID first with \"who_am_i\". Using this ID as a filter, I can retrieve all high priority issues that I have created using \"works_list\" tool."
+    },
+
+    {
+        "Query": "As a user, I need to summarize the urgent tickets needing a response.",
+        "Output": [
+                        {
+                            "tool_name": "works_list",
+                            "arguments": [
+                                {
+                                    "argument_name": "ticket.needs_response",
+                                    "argument_value": "true"
+                                },
+                                {
+                                    "argument_name": "ticket.severity",
+                                    "argument_value": ["high", "blocker"]
+                                },
+                                {
+                                    "argument_name": "type",
+                                    "argument_value": ["ticket"]
+                                }
+                            ]
+                        },
+                        {
+                            "tool_name": "summarize_objects",
+                            "arguments": [
+                                {
+                                    "argument_name": "objects",
+                                    "argument_value": "$$PREV[0]"
+                                }
+                            ]
+                        }
+        ],
+        "Reasoning": "I selected \"works_list\" to filter out the list of tickets that are both urgent (severity being high or blocker) and needing a response. Then, I'd use \"summarize_objects\" to get a concise summary of those filtered tickets."
+    },
+
+    {
+        "Query": "I need to prioritize and summarize all the issues within my organization's Rev department that are in the triage stage.",
+        "Output": [
+                        {
+                            "tool_name": "works_list",
+                            "arguments": [
+                                {
+                                    "argument_name": "issue.rev_orgs",
+                                    "argument_value": ["REV-123"]
+                                },
+                                {
+                                    "argument_name": "stage.name",
+                                    "argument_value": ["triage"]
+                                },
+                                {
+                                    "argument_name": "type",
+                                    "argument_value": ["issue"]
+                                }
+                            ]
+                        },
+                        {
+                            "tool_name": "prioritize_objects",
+                            "arguments": [
+                                {
+                                    "argument_name": "objects",
+                                    "argument_value": "$$PREV[0]"
+                                }
+                            ]
+                        },
+                        {
+                            "tool_name": "summarize_objects",
+                            "arguments": [
+                                {
+                                    "argument_name": "objects",
+                                    "argument_value": "$$PREV[1]"
+                                }
+                            ]
+                        }
+        ],
+        "Reasoning": "I first use \"works_list\" to get all triage stage issues within my Rev department. Then, \"prioritize_objects\" is used to sort these issues by their importance. Finally, \"summarize_objects\" provides a summary of the prioritized issue list."
+    },
+
+    {
+        "Query": "I need to add my high-priority enhancement tasks to the current sprint.",
+        "Output": [ 
+                        {
+                            "tool_name": "works_list",
+                            "arguments": [
+                                {
+                                    "argument_name": "applies_to_part",
+                                    "argument_value": ["ENH-123"]
+                                },
+                                {
+                                    "argument_name": "issue.priority",
+                                    "argument_value": ["p0", "p1"]
+                                },
+                                {
+                                    "argument_name": "type",
+                                    "argument_value": ["task"]
+                                }
+                            ]
+                        },
+                        {
+                            "tool_name": "get_sprint_id",
+                            "arguments": []
+                        },
+                        {
+                            "tool_name": "add_work_items_to_sprint",
+                            "arguments": [
+                                {
+                                    "argument_name": "work_ids",
+                                    "argument_value": "$$PREV[0]"
+                                },
+                                {
+                                    "argument_name": "sprint_id",
+                                    "argument_value": "$$PREV[1]"
+                                }
+                            ]
+                        }
+        ],
+        "Reasoning": "To focus on my high-priority enhancement tasks, I filter them out using \"works_list\". Then, to add these tasks to a sprint, I need the current sprint ID from \"get_sprint_id\". Finally, I use \"add_work_items_to_sprint\" to add the tasks to the desired sprint."
+    },
+
+    {
+        "Query": "I want to find tasks similar to a specific work item and prioritize them.",
+        "Output": [
+                        {
+                            "tool_name": "get_similar_work_items",
+                            "arguments": [
+                                {
+                                    "argument_name": "work_id",
+                                    "argument_value": "DEV-23456"
+                                }
+                            ]
+                        },
+                        {
+                            "tool_name": "prioritize_objects",
+                            "arguments": [
+                                {
+                                    "argument_name": "objects",
+                                    "argument_value": "$$PREV[0]"
+                                }
+                            ]
+                        }
+        ],
+        "Reasoning": "The task involves finding tasks similar to a given reference task, which is what \"get_similar_work_items\" tool does. Using the list produced, I use \"prioritize_objects\" to arrange them in order of priority for better manageability."
+    },
+
+    {
+        "Query": "I am drafting a report and need to convert the provided names into recognized organizational work items and then summarize the batch.",
+        "Output": [
+                        {
+                            "tool_name": "search_object_by_name",
+                            "arguments": [
+                                {
+                                    "argument_name": "query",
+                                    "argument_value": "Data Analysis Integration"
+                                }
+                            ]
+                        },
+                        {
+                            "tool_name": "search_object_by_name",
+                            "arguments": [
+                                {
+                                    "argument_name": "query",
+                                    "argument_value": "UX Enhancement Project"
+                                }
+                            ]
+                        },
+                        {
+                            "tool_name": "summarize_objects",
+                            "arguments": [
+                                {
+                                    "argument_name": "objects",
+                                    "argument_value": ["$$PREV[0]", "$$PREV[1]"]
+                                }
+                            ]
+                        }
+        ],
+        "Reasoning": "To identify the work items by name, I use \"search_object_by_name\" for each named project. Once I have the IDs, I use \"summarize_objects\" to create a brief for the report."
+    },
+
+    {
+        "Query": "I need to prioritize a list of issues and then add those with 'blocker' severity to the current sprint.",
+        "Output": [
+                        {
+                            "tool_name": "works_list",
+                            "arguments": [
+                                {
+                                    "argument_name": "issue.severity",
+                                    "argument_value": ["blocker"]
+                                }
+                            ]
+                        },
+                        {
+                            "tool_name": "prioritize_objects",
+                            "arguments": [
+                                {
+                                    "argument_name": "objects",
+                                    "argument_value": "$$PREV[0]"
+                                }
+                            ]
+                        },
+                        {
+                            "tool_name": "get_sprint_id",
+                            "arguments": []
+                        },
+                        {
+                            "tool_name": "add_work_items_to_sprint",
+                            "arguments": [
+                                {
+                                    "argument_name": "work_ids",
+                                    "argument_value": "$$PREV[1]"
+                                },
+                                {
+                                    "argument_name": "sprint_id",
+                                    "argument_value": "$$PREV[2]"
+                                }
+                            ]
+                        }
+        ],
+        "Reasoning": "I use \"works_list\" to find all issues with 'blocker' severity. Then, I prioritize them using \"prioritize_objects\" to decide the order of solving. With \"get_sprint_id\", I get the ID of the current sprint, to which the prioritized issues are added with the \"add_work_items_to_sprint\"."
+    },
+
+    {
+        "Query": "Assess the work items created by a specific developer and summarize the key tasks.",
+        "Output": [
+                        {
+                            "tool_name": "who_am_i",
+                            "arguments": []
+                        },
+                        {
+                            "tool_name": "works_list",
+                            "arguments": [
+                                {
+                                    "argument_name": "created_by",
+                                    "argument_value": "$$PREV[0]"
+                                },
+                                {
+                                    "argument_name": "type",
+                                    "argument_value": ["task", "issue"]
+                                }
+                            ]
+                        },
+                        {
+                            "tool_name": "summarize_objects",
+                            "arguments": [
+                                {
+                                    "argument_name": "objects",
+                                    "argument_value": "$$PREV[1]"
+                                }
+                            ]
+                        }
+        ],
+        "Reasoning": "First, to know which developer's work items I am assessing, I identify my own user ID with \"who_am_i\". Then, with \"works_list\", I query the database to fetch the tasks and issues created by that user ID. Finally, I summarize them using \"summarize_objects\" for a comprehensive view."
+    },
+
+    {
+        "Query": "I want to get the list of tasks created by users in the Rev organization that came from Slack and need a response.",
+        "Output": [
+                        {
+                            "tool_name": "works_list",
+                            "arguments": [
+                                {
+                                    "argument_name": "owned_by",
+                                    "argument_value": ["REV-123"]
+                                },
+                                {
+                                    "argument_name": "ticket.source_channel",
+                                    "argument_value": ["slack"]
+                                },
+                                {
+                                    "argument_name": "ticket.needs_response",
+                                    "argument_value": "true"
+                                },
+                                {
+                                    "argument_name": "type",
+                                    "argument_value": ["task"]
+                                }
+                            ]
+                        },
+                        {
+                            "tool_name": "summarize_objects",
+                            "arguments": [
+                                {
+                                    "argument_name": "objects",
+                                    "argument_value": "$$PREV[0]"
+                                }
+                            ]
+                        }
+        ],
+        "Reasoning": "The intention is to filter the tasks specific to the Rev organization that requires attention from Slack messages. So I use \"works_list\" to retrieve this specific subset. Then for easier interpretation or reporting, I use \"summarize_objects\" to create an executive summary of the tasks obtained."
+    },
+
+    {
+        "Query": "I want to prioritize the issues raised in the Slack channel of severity 'high' and add the top 5 into the current sprint.",
+        "Output": [
+        {
+            "tool_name": "works_list",
+            "arguments": [
+            {
+                "argument_name": "ticket.source_channel",
+                "argument_value": "slack"
+            },
+            {
+                "argument_name": "ticket.severity",
+                "argument_value": "high"
+            },
+            {
+                "argument_name": "type",
+                "argument_value": "issue"
+            },
+            {
+                "argument_name": "limit",
+                "argument_value": "50"
+            }
+            ]
+        },
+        {
+            "tool_name": "prioritize_objects",
+            "arguments": [
+            {
+                "argument_name": "objects",
+                "argument_value": "$$PREV[0]"
+            }
+            ]
+        },
+        {
+            "tool_name": "get_sprint_id",
+            "arguments": []
+        },
+        {
+            "tool_name": "add_work_items_to_sprint",
+            "arguments": [
+            {
+                "argument_name": "work_ids",
+                "argument_value": "$$PREV[1]"
+            },
+            {
+                "argument_name": "sprint_id",
+                "argument_value": "$$PREV[2]"
+            }
+            ]
+        }
+        ],
+        "Reasoning": "I selected 'works_list' to filter the issues from Slack with high severity, 'prioritize_objects' to sort them by priority so I can focus on the most important ones, 'get_sprint_id' to retrieve the current sprint ID, and 'add_work_items_to_sprint' to add these prioritized items to the sprint. I've limited the 'works_list' query to 50 items for performance and will manually select the top 5 after prioritization for 'add_work_items_to_sprint'."
+    },
+    {
+        "Query": "As the sprint manager, I need to summarize all tasks owned by me in the 'development' stage and summarize their details for the upcoming review meeting.",
+        "Output": [
+        {
+            "tool_name": "who_am_i",
+            "arguments": []
+        },
+        {
+            "tool_name": "works_list",
+            "arguments": [
+            {
+                "argument_name": "owned_by",
+                "argument_value": "$$PREV[0]"
+            },
+            {
+                "argument_name": "stage.name",
+                "argument_value": "development"
+            },
+            {
+                "argument_name": "type",
+                "argument_value": "task"
+            }
+            ]
+        },
+        {
+            "tool_name": "summarize_objects",
+            "arguments": [
+            {
+                "argument_name": "objects",
+                "argument_value": "$$PREV[1]"
+            }
+            ]
+        }
+        ],
+        "Reasoning": "I used 'who_am_i' to identify my user ID, then 'works_list' to filter tasks that are owned by me and in the 'development' stage, and finally 'summarize_objects' to create a summary of these tasks that I can use for the review meeting."
+    },
+    {
+        "Query": "Find my current tasks related to the 'REV-123' project which need a response, and prepare a list of actionable tasks from the summary of these items.",
+        "Output": [
+        {
+            "tool_name": "who_am_i",
+            "arguments": []
+        },
+        {
+            "tool_name": "works_list",
+            "arguments": [
+            {
+                "argument_name": "owned_by",
+                "argument_value": "$$PREV[0]"
+            },
+            {
+                "argument_name": "issue.rev_orgs",
+                "argument_value": "REV-123"
+            },
+            {
+                "argument_name": "ticket.needs_response",
+                "argument_value": "true"
+            },
+            {
+                "argument_name": "type",
+                "argument_value": "task"
+            },
+            {
+                "argument_name": "limit",
+                "argument_value": "10"
+            }
+            ]
+        },
+        {
+            "tool_name": "summarize_objects",
+            "arguments": [
+            {
+                "argument_name": "objects",
+                "argument_value": "$$PREV[1]"
+            }
+            ]
+        },
+        {
+            "tool_name": "create_actionable_tasks_from_text",
+            "arguments": [
+            {
+                "argument_name": "text",
+                "argument_value": "$$PREV[2]"
+            }
+            ]
+        }
+        ],
+        "Reasoning": "'who_am_i' will capture my user ID to identify tasks owned by me, 'works_list' will filter out tasks related to 'REV-123' which require a response, 'summarize_objects' will create a summarized description of these tasks, and 'create_actionable_tasks_from_text' will generate a list of actionable tasks based on this summary for better task management."
+    },      
+
+    {
+        "Query": "I want to check for any blocker tickets arisen overnight and prioritize my response based on their severity and requirement for immediate attention.",
+        "Output": [
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "ticket.severity",
+                        "argument_value": "blocker"
+                    },
+                    {
+                        "argument_name": "ticket.needs_response",
+                        "argument_value": "true"
+                    },
+                    {
+                        "argument_name": "type",
+                        "argument_value": "ticket"
+                    }
+                ]
+            },
+            {
+                "tool_name": "prioritize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[0]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "works_list is used to filter tickets by the highest severity level that requires immediate attention. prioritize_objects then sorts these tickets to facilitate effective and prioritized responses."
+    },
+    {
+        "Query": "After resolving a major issue, I need to summarize other related open tasks to ensure that associated concerns are addressed.",
+        "Output": [
+            {
+                "tool_name": "get_similar_work_items",
+                "arguments": [
+                    {
+                        "argument_name": "work_id",
+                        "argument_value": "ISSUE-RESOLVED123"
+                    }
+                ]
+            },
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "type",
+                        "argument_value": "task"
+                    }
+                ]
+            },
+            {
+                "tool_name": "summarize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[1]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "get_similar_work_items provides a collection of items related to a recently resolved issue. works_list filter ensures only open tasks are considered, and summarize_objects creates a summary for a comprehensive overview of remaining concerns."
+    },
+    {
+        "Query": "I need to search for the current project I am assigned to and then fetch similar work items to review their status.",
+        "Output": [
+            {
+                "tool_name": "who_am_i",
+                "arguments": []
+            },
+            {
+                "tool_name": "search_object_by_name",
+                "arguments": [
+                    {
+                        "argument_name": "query",
+                        "argument_value": "$$PREV[0]"
+                    }
+                ]
+            },
+            {
+                "tool_name": "get_similar_work_items",
+                "arguments": [
+                    {
+                        "argument_name": "work_id",
+                        "argument_value": "$$PREV[1]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "who_am_i finds the user ID, then search_object_by_name is used to get the project assigned to the user. get_similar_work_items follows this by retrieving similar work items so the user can review their progress."
+    },
+    {
+        "Query": "I want to identify and summarize tasks from the latest product feedback document and add these to the upcoming sprint.",
+        "Output": [
+            {
+                "tool_name": "create_actionable_tasks_from_text",
+                "arguments": [
+                    {
+                        "argument_name": "text",
+                        "argument_value": "Several users reported difficulty navigating the new interface in the product feedback."
+                    }
+                ]
+            },
+            {
+                "tool_name": "get_sprint_id",
+                "arguments": []
+            },
+            {
+                "tool_name": "add_work_items_to_sprint",
+                "arguments": [
+                    {
+                        "argument_name": "work_ids",
+                        "argument_value": "$$PREV[0]"
+                    },
+                    {
+                        "tool_name": "sprint_id",
+                        "arguments": [
+                            {
+                                "argument_name": "sprint_id",
+                                "argument_value": "$$PREV[1]"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "tool_name": "summarize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[0]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "The create_actionable_tasks_from_text tool extracts tasks from user feedback. get_sprint_id fetches the current sprint ID, and add_work_items_to_sprint adds tasks to the sprint. Lastly, summarize_objects provides a summary that can be shared with the team."
+    },
+    {
+        "Query": "I want to prepare a report of all issues opened by REV-TECH123 organization and their associated similar work items for analysis.",
+        "Output": [
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "issue.rev_orgs",
+                        "argument_value": "REV-TECH123"
+                    },
+                    {
+                        "argument_name": "type",
+                        "argument_value": "issue"
+                    }
+                ]
+            },
+            {
+                "tool_name": "get_similar_work_items",
+                "arguments": [
+                    {
+                        "argument_name": "work_id",
+                        "argument_value": "$$PREV[0]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "works_list is used to identify issues from REV-TECH123 organization. For each identified issue, get_similar_work_items will find associated work items for inclusion in the report, assisting with organizational analysis."
+    },
+
+    {
+        "Query": "Find the highest priority work items created by me and summarize them.",
+        "Output": [
+            {
+                "tool_name": "who_am_i",
+                "arguments": []
+            },
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "created_by",
+                        "argument_value": "$$PREV[0]"
+                    },
+                    {
+                        "argument_name": "issue.priority",
+                        "argument_value": ["p0"]
+                    }
+                ]
+            },
+            {
+                "tool_name": "summarize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[1]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "The first tool 'who_am_i' helps to retrieve the ID of the current user. The second tool 'works_list' uses this ID to obtain work items created by the current user with top priority (p0). Lastly, 'summarize_objects' is used to provide a summary of these high-priority work items, making it easier to understand their collective content."
+    },
+    {
+        "Query": "Prepare for the upcoming sprint by adding the most critical unresolved tickets to it.",
+        "Output": [
+            {
+                "tool_name": "get_sprint_id",
+                "arguments": []
+            },
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "type",
+                        "argument_value": ["ticket"]
+                    },
+                    {
+                        "argument_name": "ticket.severity",
+                        "argument_value": ["blocker"]
+                    },
+                    {
+                        "argument_name": "stage.name",
+                        "argument_value": ["triage"]
+                    }
+                ]
+            },
+            {
+                "tool_name": "add_work_items_to_sprint",
+                "arguments": [
+                    {
+                        "argument_name": "sprint_id",
+                        "argument_value": "$$PREV[0]"
+                    },
+                    {
+                        "argument_name": "work_ids",
+                        "argument_value": "$$PREV[1]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "The first tool 'get_sprint_id' fetches the ID of the current sprint. Using 'works_list', the second tool, we find all tickets of the highest severity ('blocker') still in 'triage' stage, implying they are unresolved and critical. Finally, 'add_work_items_to_sprint' adds these tickets to the sprint using its ID and the list of ticket IDs collected from the previous step."
+    },
+    {
+        "Query": "Identify and summarize tasks that need a response from the Rev organization.",
+        "Output": [
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "ticket.needs_response",
+                        "argument_value": "true"
+                    },
+                    {
+                        "argument_name": "ticket.rev_org",
+                        "argument_value": ["REV-123"]
+                    },
+                    {
+                        "argument_name": "type",
+                        "argument_value": ["ticket"]
+                    }
+                ]
+            },
+            {
+                "tool_name": "summarize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[0]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "Firstly, the 'works_list' tool is used to filter tickets that require a response and belong to the specified Rev organization ('REV-123'). These tasks are likely to need immediate attention, and summarizing them with 'summarize_objects' provides a readable overview for quick assessment and action."
+    },
+    {
+        "Query": "Find similar high-priority issues to the one I'm currently working on for a cross-analysis.",
+        "Output": [
+            {
+                "tool_name": "search_object_by_name",
+                "arguments": [
+                    {
+                        "argument_name": "query",
+                        "argument_value": "current work item"
+                    }
+                ]
+            },
+            {
+                "tool_name": "get_similar_work_items",
+                "arguments": [
+                    {
+                        "argument_name": "work_id",
+                        "argument_value": "$$PREV[0]"
+                    }
+                ]
+            },
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "issue.priority",
+                        "argument_value": ["p0"]
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "The Query involves two steps: identifying the work item in question using the 'search_object_by_name' tool and then retrieving similar work items with the 'get_similar_work_items' tool. The second list is then further filtered by the 'works_list' tool to include only those similar items with the highest priority."
+    },
+    {
+        "Query": "Prioritize issues from the customer feedback channel that are unresolved and ready for development work.",
+        "Output": [
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "ticket.source_channel",
+                        "argument_value": ["feedback"]
+                    },
+                    {
+                        "argument name": "stage.name",
+                        "argument_value": ["ready for development"]
+                    },
+                    {
+                        "argument_name": "type",
+                        "argument_value": ["issue"]
+                    }
+                ]
+            },
+            {
+                "tool_name": "prioritize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[0]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "To manage and prioritize the workflow effectively, the 'works_list' tool first filters issues that have originated from customer feedback and are in the 'ready for development' stage. The resulting list is then prioritized by using 'prioritize_objects' to ensure that development efforts are focused on the most critical issues first."
+    },
+    
+    {
+        "Query": "Extract tasks from meeting notes and assign them to the current sprint.",
+        "Output": [
+            {
+                "tool_name": "get_sprint_id",
+                "arguments": []
+            },
+            {
+                "tool_name": "create_actionable_tasks_from_text",
+                "arguments": [
+                    {
+                        "argument_name": "text",
+                        "argument_value": "Meeting notes from the latest product review."
+                    }
+                ]
+            },
+            {
+                "tool_name": "add_work_items_to_sprint",
+                "arguments": [
+                    {
+                        "argument_name": "sprint_id",
+                        "argument_value": "$$PREV[0]"
+                    },
+                    {
+                        "argument_name": "work_ids",
+                        "argument_value": "$$PREV[1]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "This Query requires preparing for work execution based on recent meeting discussions. The sequence starts with 'get_sprint_id' to fetch the active sprint ID. 'create_actionable_tasks_from_text' is then used to generate concrete tasks from the meeting notes. Finally, 'add_work_items_to_sprint' schedules these new tasks within the current sprint for implementation."
+    },
+    {
+        "Query": "After resolving a critical bug, find and summarize similar issues to ensure comprehensive coverage in regression testing.",
+        "Output": [
+            {
+                "tool_name": "search_object_by_name",
+                "arguments": [
+                    {
+                        "argument_name": "query",
+                        "argument_value": "resolved critical bug"
+                    }
+                ]
+            },
+            {
+                "tool_name": "get_similar_work_items",
+                "arguments": [
+                    {
+                        "argument_name": "work_id",
+                        "argument_value": "$$PREV[0]"
+                    }
+                ]
+            },
+            {
+                "tool_name": "summarize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[1]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "Ensuring no similar bugs exist after resolving an issue is crucial for maintaining software quality. First, 'search_object_by_name' identifies the recently resolved critical bug, then 'get_similar_work_items' retrieves a list of work items that are similar to this bug. Finally, 'summarize_objects' provides a brief overview of these similar issues to help with the regression testing process."
+    },
+    {
+        "Query": "Gather high-priority development tasks and summarize them for my weekly productivity report.",
+        "Output": [
+            {
+                "tool_name": "who_am_i",
+                "arguments": []
+            },
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "type",
+                        "argument_value": ["task"]
+                    },
+                    {
+                        "argument_name": "issue.priority",
+                        "argument_value": ["p0", "p1"]
+                    },
+                    {
+                        "argument_name": "owned_by",
+                        "argument_value": "$$PREV[0]"
+                    }
+                ]
+            },
+            {
+                "tool_name": "summarize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[1]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "Productivity reports are essential for tracking progress and planning. The 'who_am_i' tool is used to get the current user's ID. Using this ID, 'works_list' fetches tasks of the highest priorities owned by the user. These tasks are then summarized using 'summarize_objects' to create a concise report of the user's weekly productivity."
+    },
+
+    {
+        "Query": "Create and prioritize a list of features requested by top-tier clients to discuss in the upcoming product development meeting.",
+        "Output": [
+            {
+                "tool_name": "search_object_by_name",
+                "arguments": [
+                    {
+                        "argument_name": "query",
+                        "argument_value": "top-tier clients"
+                    }
+                ]
+            },
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "applies_to_part",
+                        "argument_value": "$$PREV[0]"
+                    },
+                    {
+                        "argument_name": "type",
+                        "argument_value": ["feature"]
+                    }
+                ]
+            },
+            {
+                "tool_name": "prioritize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[1]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "For product development, focusing on client needs is vital. Initially, 'search_object_by_name' finds IDs related to top-tier clients, which are used as a filter in 'works_list' to retrieve a list of feature requests. These features are then ordered by priority using 'prioritize_objects' to prepare for a focused discussion in the upcoming meeting."
+    },
+    {
+        "Query": "For the end-of-year performance review, summarize my completed high-priority tasks and issues.",
+        "Output": [
+            {
+                "tool_name": "who_am_i",
+                "arguments": []
+            },
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "owned_by",
+                        "argument_value": "$$PREV[0]"
+                    },
+                    {
+                        "argument_name": "issue.priority",
+                        "argument_value": ["p0", "p1"]
+                    },
+                    {
+                        "argument_name": "stage.name",
+                        "argument_value": ["completed"]
+                    }
+                ]
+            },
+            {
+                "tool_name": "summarize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[1]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "Performance reviews benefit from a well-documented list of accomplishments. The Query starts with 'who_am_i' to identify the user. Then 'works_list' is used to filter tasks and issues of high-priority that were completed by the user. 'summarize_objects' finally compiles these work items into an easy-to-understand summary, ready for the performance review discussion."
+    },
+    {
+        "Query": "Find work items similar to the ticket I worked on last week, ticket ID 'TICK123', and summarize them for today's team meeting.",
+        "Output": [
+            {
+                "tool_name": "get_similar_work_items",
+                "arguments": [
+                    {
+                        "argument_name": "work_id",
+                        "argument_value": "TICK123"
+                    }
+                ]
+            },
+            {
+                "tool_name": "summarize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[0]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "To prepare a summary for the meeting, first I need to find related work items. 'get_similar_work_items' fetches these items using my past ticket ID. I then use 'summarize_objects' to create a concise report on those work items for discussion."
+    },
+
+    {
+        "Query": "I would like to get a prioritized list of all high-severity tickets and tasks that are related to our 'FEAT-XYZ' and assign them to this sprint.",
+        "Output": [
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "applies_to_part",
+                        "argument_value": ["FEAT-XYZ"]
+                    },
+                    {
+                        "argument_name": "type",
+                        "argument_value": ["ticket", "task"]
+                    },
+                    {
+                        "argument_name": "ticket.severity",
+                        "argument_value": ["high"]
+                    }
+                ]
+            },
+            {
+                "tool_name": "prioritize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[0]"
+                    }
+                ]
+            },
+            {
+                "tool_name": "get_sprint_id",
+                "arguments": []
+            },
+            {
+                "tool_name": "add_work_items_to_sprint",
+                "arguments": [
+                    {
+                        "argument_name": "work_ids",
+                        "argument_value": "$$PREV[1]"
+                    },
+                    {
+                        "argument_name": "sprint_id",
+                        "argument_value": "$$PREV[2]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "\"works_list\" will retrieve the tickets and tasks associated with 'FEAT-XYZ' that are of high severity. \"prioritize_objects\" then organizes them by priority. The current sprint ID is obtained via \"get_sprint_id\" and finally, \"add_work_items_to_sprint\" adds the prioritized items to the sprint."
+    },
+    {
+        "Query": "I received a detailed project proposal and I need to identify action items from this text, prioritize them, then get my sprint ID to add these tasks to my current sprint.",
+        "Output": [
+            {
+                "tool_name": "create_actionable_tasks_from_text",
+                "arguments": [
+                    {
+                        "argument_name": "text",
+                        "argument_value": "Insert project proposal text here"
+                    }
+                ]
+            },
+            {
+                "tool_name": "prioritize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[0]"
+                    }
+                ]
+            },
+            {
+                "tool_name": "get_sprint_id",
+                "arguments": []
+            },
+            {
+                "tool_name": "add_work_items_to_sprint",
+                "arguments": [
+                    {
+                        "argument_name": "work_ids",
+                        "argument_value": "$$PREV[1]"
+                    },
+                    {
+                        "tool_name": "works_list",
+                        "arguments": [
+                            {
+                                "argument_name": "created_by",
+                                "argument_value": "$$PREV[0]"
+                            },
+                            {
+                                "argument_name": "issue.priority",
+                                "argument_value": ["p1"]
+                            },
+                            {
+                                "argument_name": "type",
+                                "argument_value": ["ticket"]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "To handle the project proposal text, \"create_actionable_tasks_from_text\" extracts tasks. Then, \"prioritize_objects\" orders these tasks. After getting the sprint ID with \"get_sprint_id,\" they are added into the sprint with \"add_work_items_to_sprint.\""
+    },
+    {
+        "Query": "Find me the ID of my user profile and give me a list of all the P1 tickets that were created by me.",
+        "Output": [
+            {
+                "tool_name": "who_am_i",
+                "arguments": []
+            },
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "created_by",
+                        "argument_value": "$$PREV[0]"
+                    },
+                    {
+                        "argument_name": "issue.priority",
+                        "argument_value": ["p1"]
+                    },
+                    {
+                        "argument_name": "type",
+                        "argument_value": ["ticket"]
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "\"who_am_i\" discovers my user ID which is used by \"works_list\" to filter for P1 tickets I created. This helps me independently track my top-priority work in the system."
+    },
+
+    {
+        "Query": "During today's meeting, I need to highlight issues in Triage stage and also the newly created tasks that haven't got a response yet.",
+        "Output": [
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "stage.name",
+                        "argument_value": ["triage"]
+                    },
+                    {
+                        "argument_name": "type",
+                        "argument_value": ["issue"]
+                    }
+                ]
+            },
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "tool_name": "works_list",
+                        "arguments": [
+                            {
+                                "argument_name": "ticket.needs_response",
+                                "argument_value": "true"
+                            },
+                            {
+                                "argument_name": "type",
+                                "argument_value": ["task"]
+                            },
+                            {
+                                "argument_name": "limit",
+                                "argument_value": "10"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "tool_name": "summarize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[0]"
+                    }
+                ]
+            },
+            {
+                "tool_name": "summarize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[1]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "Using \"works_list\" twice filters issues in the Triage stage and new tasks needing a response. Utilizing \"summarize_objects\" twice provides an overview of both for an effective meeting presentation."
+    },
+    {
+        "Query": "I want to identify any customer support tickets from a client 'Globex' submitted via Slack that need to be addressed urgently.",
+        "Output": [
+            {
+                "tool_name": "search_object_by_name",
+                "arguments": [
+                    {
+                        "argument_name": "query",
+                        "argument_value": "Globex"
+                    }
+                ]
+            },
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "ticket.rev_org",
+                        "argument_value": "$$PREV[0]"
+                    },
+                    {
+                        "argument_name": "ticket.source_channel",
+                        "argument_value": ["slack"]
+                    },
+                    {
+                        "argument_name": "ticket.needs_response",
+                        "argument_value": "true"
+                    },
+                    {
+                        "argument_name": "limit",
+                        "argument_value": "5"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "The \"search_object_by_name\" tool retrieves the 'Globex' ID, which \"works_list\" then uses to find Slack-based support tickets needing a response, ensuring we address client queries efficiently."
+    },
+    {
+        "Query": "Organize the issues that I've posted for our 'REV-123' organization by severity, so they can be addressed accordingly.",
+        "Output": [
+            {
+                "tool_name": "who_am_i",
+                "arguments": []
+            },
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "created_by",
+                        "argument_value": "$$PREV[0]"
+                    },
+                    {
+                        "argument_name": "issue.rev_orgs",
+                        "argument_value": ["REV-123"]
+                    },
+                    {
+                        "argument_name": "type",
+                        "argument_value": ["issue"]
+                    }
+                ]
+            },
+            {
+                "tool_name": "prioritize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[1]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "The combination of \"who_am_i\" and \"works_list\" ensures we only gather issues created by me within our organization. \"prioritize_objects\" then sorts these issues to streamline our resolution process."
+    },    
+
+    {
+        "Query": "Before the sprint planning session, I need to summarize the newly created tasks and issues from last week marked as P2 so we can assess the workload and allocate tasks accordingly.",
+        "Output": [
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "issue.priority",
+                        "argument_value": ["p2"]
+                    },
+                    {
+                        "argument_name": "created_by",
+                        "argument_value": ["$$PREV[0]"]
+                    },
+                    {
+                        "argument_name": "type",
+                        "argument_value": ["task", "issue"]
+                    }
+                ]
+            },
+            {
+                "tool_name": "summarize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[1]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "\"works_list\" is called to select new tasks and issues from last week with a P2 priority, while \"summarize_objects\" is used to distill this information into a digestible summary for sprint planning."
+    },
+    {
+        "Query": "Gather all my open tasks associated with the part 'CAPL-321' to prioritize them and add any high-priority tasks to my current sprint.",
+        "Output": [
+            {
+                "tool_name": "who_am_i",
+                "arguments": []
+            },
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "owned_by",
+                        "argument_value": "$$PREV[0]"
+                    },
+                    {
+                        "argument_name": "applies_to_part",
+                        "argument_value": ["CAPL-321"]
+                    },
+                    {
+                        "argument_name": "type",
+                        "argument_value": ["task"]
+                    }
+                ]
+            },
+            {
+                "tool_name": "prioritize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[1]"
+                    }
+                ]
+            },
+            {
+                "tool_name": "get_sprint_id",
+                "arguments": []
+            },
+            {
+                "tool_name": "add_work_items_to_sprint",
+                "arguments": [
+                    {
+                        "argument_name": "work_ids",
+                        "argument_value": "[Filter high priority tasks from $$PREV[2]]"
+                    },
+                    {
+                        "argument_name": "sprint_id",
+                        "argument_value": "$$PREV[3]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "\"who_am_i\" determines my user ID, \"works_list\" fetches my tasks involving part 'CAPL-321', and \"prioritize_objects\" orders them. The top tasks are added to my sprint with \"add_work_items_to_sprint\" post-identification of the sprint via \"get_sprint_id\"."
+    },
+    {
+        "Query": "I'd like to create a detailed report of the most critical upcoming tasks owned by 'DEVU-456' for review in tomorrow's management meeting.",
+        "Output": [
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "owned_by",
+                        "argument_value": ["DEVU-456"]
+                    },
+                    {
+                        "argument_name": "type",
+                        "argument_value": ["task"]
+                    },
+                    {
+                        "argument_name": "issue.priority",
+                        "argument_value": ["p0"]
+                    }
+                ]
+            },
+            {
+                "tool_name": "summarize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[0]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "The \"works_list\" tool filters the tasks owned by 'DEVU-456' that are most crucial, and \"summarize_objects\" creates a summary for a high-level overview for management deliberation."
+    },
+    
+    {
+        "Query": "I want to find work items similar to the ticket I worked on last week, ticket ID 'TICK123', and summarize them for today's team meeting.",
+        "Output": [
+            {
+                "tool_name": "get_similar_work_items",
+                "arguments": [
+                    {
+                        "argument_name": "work_id",
+                        "argument_value": "TICK123"
+                    }
+                ]
+            },
+            {
+                "tool_name": "summarize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[0]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "To prepare a summary for the meeting, first I need to find related work items. \"get_similar_work_items\" fetches these items using my past ticket ID. I then use \"summarize_objects\" to create a concise report on those work items for discussion."
+    },
+    {
+        "Query": "I would like to get a prioritized list of all high-severity tickets and tasks that are related to our 'FEAT-XYZ' and assign them to this sprint.",
+        "Output": [
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "applies_to_part",
+                        "argument_value": ["FEAT-XYZ"]
+                    },
+                    {
+                        "argument_name": "type",
+                        "argument_value": ["ticket", "task"]
+                    },
+                    {
+                        "argument_name": "ticket.severity",
+                        "argument_value": ["high"]
+                    }
+                ]
+            },
+            {
+                "tool_name": "prioritize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[0]"
+                    }
+                ]
+            },
+            {
+                "tool_name": "get_sprint_id",
+                "arguments": []
+            },
+            {
+                "tool_name": "add_work_items_to_sprint",
+                "arguments": [
+                    {
+                        "argument_name": "work_ids",
+                        "argument_value": "$$PREV[1]"
+                    },
+                    {
+                        "argument_name": "sprint_id",
+                        "argument_value": "$$PREV[2]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "\"works_list\" will retrieve the tickets and tasks associated with 'FEAT-XYZ' that are of high severity. \"prioritize_objects\" then organizes them by priority. The current sprint ID is obtained via \"get_sprint_id\" and finally, \"add_work_items_to_sprint\" adds the prioritized items to the sprint."
+    },  
+
+    {
+        "Query": "I received a detailed project proposal and I need to identify action items from this text, prioritize them, then get my sprint ID to add these tasks to my current sprint.",
+        "Output": [
+            {
+                "tool_name": "create_actionable_tasks_from_text",
+                "arguments": [
+                    {
+                        "argument_name": "text",
+                        "argument_value": "Insert project proposal text here"
+                    }
+                ]
+            },
+            {
+                "tool_name": "prioritize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[0]"
+                    }
+                ]
+            },
+            {
+                "tool_name": "get_sprint_id",
+                "arguments": []
+            },
+            {
+                "tool_name": "add_work_items_to_sprint",
+                "arguments": [
+                    {
+                        "argument_name": "work_ids",
+                        "argument_value": "$$PREV[1]"
+                    },
+                    {
+                        "argument_name": "sprint_id",
+                        "argument_value": "$$PREV[2]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "To handle the project proposal text, \"create_actionable_tasks_from_text\" extracts tasks. Then, \"prioritize_objects\" orders these tasks. After getting the sprint ID with \"get_sprint_id,\" they are added into the sprint with \"add_work_items_to_sprint.\""
+    },
+    {
+        "Query": "Find me the ID of my user profile and give me a list of all the P1 tickets that were created by me.",
+        "Output": [
+            {
+                "tool_name": "who_am_i",
+                "arguments": []
+            },
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "created_by",
+                        "argument_value": "$$PREV[0]"
+                    },
+                    {
+                        "argument_name": "issue.priority",
+                        "argument_value": ["p1"]
+                    },
+                    {
+                        "argument_name": "type",
+                        "argument_value": ["ticket"]
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "\"who_am_i\" discovers my user ID which is used by \"works_list\" to filter for P1 tickets I created. This helps me independently track my top-priority work in the system."
+    },
+
+    {
+        "Query": "During today's meeting, I need to highlight issues in Triage stage and also the newly created tasks that haven't got a response yet.",
+        "Output": [
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "stage.name",
+                        "argument_value": ["triage"]
+                    },
+                    {
+                        "argument_name": "type",
+                        "argument_value": ["issue"]
+                    }
+                ]
+            },
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "ticket.needs_response",
+                        "argument_value": true
+                    },
+                    {
+                        "argument_name": "type",
+                        "argument_value": ["task"]
+                    },
+                    {
+                        "argument_name": "limit",
+                        "argument_value": 10
+                    }
+                ]
+            },
+            {
+                "tool_name": "summarize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[0]"
+                    }
+                ]
+            },
+            {
+                "tool_name": "summarize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[1]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "Using \"works_list\" twice filters issues in the Triage stage and new tasks needing a response. Utilizing \"summarize_objects\" twice provides an overview of both for an effective meeting presentation."
+    },
+    {
+        "Query": "I want to identify any customer support tickets from a client 'Globex' submitted via Slack that need to be addressed urgently.",
+        "Output": [
+            {
+                "tool_name": "search_object_by_name",
+                "arguments": [
+                    {
+                        "argument_name": "query",
+                        "argument_value": "Globex"
+                    }
+                ]
+            },
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "ticket.rev_org",
+                        "argument_value": "$$PREV[0]"
+                    },
+                    {
+                        "argument_name": "ticket.source_channel",
+                        "argument_value": ["slack"]
+                    },
+                    {
+                        "argument_name": "ticket.needs_response",
+                        "argument_value": true
+                    },
+                    {
+                        "argument_name": "limit",
+                        "argument_value": 5
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "The \"search_object_by_name\" tool retrieves the 'Globex' ID, which \"works_list\" then uses to find Slack-based support tickets needing a response, ensuring we address client queries efficiently."
+    },
+
+    {
+        "Query": "Organize the issues that I've posted for our 'REV-123' organization by severity, so they can be addressed accordingly.",
+        "Output": [
+            {
+                "tool_name": "who_am_i",
+                "arguments": []
+            },
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "created_by",
+                        "argument_value": "$$PREV[0]"
+                    },
+                    {
+                        "argument_name": "issue.rev_orgs",
+                        "argument_value": ["REV-123"]
+                    },
+                    {
+                        "argument_name": "type",
+                        "argument_value": ["issue"]
+                    }
+                ]
+            },
+            {
+                "tool_name": "prioritize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[1]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "The combination of \"who_am_i\" and \"works_list\" ensures we only gather issues created by me within our organization. \"prioritize_objects\" then sorts these issues to streamline our resolution process."
+    },
+    {
+        "Query": "Before the sprint planning session, I need to summarize the newly created tasks and issues from last week marked as P2 so we can assess the workload and allocate tasks accordingly.",
+        "Output": [
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "issue.priority",
+                        "argument_value": ["p2"]
+                    },
+                    {
+                        "argument_name": "created_by",
+                        "argument_value": ["$$PREV[0]"]
+                    },
+                    {
+                        "argument_name": "type",
+                        "argument_value": ["task", "issue"]
+                    }
+                ]
+            },
+            {
+                "tool_name": "summarize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[1]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "\"works_list\" is called to select new tasks and issues from last week with a P2 priority, while \"summarize_objects\" is used to distill this information into a digestible summary for sprint planning."
+    },   
+
+    {
+        "Query": "Gather all my open tasks associated with the part 'CAPL-321' to prioritize them and add any high-priority tasks to my current sprint.",
+        "Output": [
+            {
+                "tool_name": "who_am_i",
+                "arguments": []
+            },
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "owned_by",
+                        "argument_value": "$$PREV[0]"
+                    },
+                    {
+                        "argument_name": "applies_to_part",
+                        "argument_value": ["CAPL-321"]
+                    },
+                    {
+                        "argument_name": "type",
+                        "argument_value": ["task"]
+                    }
+                ]
+            },
+            {
+                "tool_name": "prioritize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[1]"
+                    }
+                ]
+            },
+            {
+                "tool_name": "get_sprint_id",
+                "arguments": []
+            },
+            {
+                "tool_name": "add_work_items_to_sprint",
+                "arguments": [
+                    {
+                        "argument_name": "work_ids",
+                        "argument_value": "[Filter high priority tasks from $$PREV[2]]"
+                    },
+                    {
+                        "argument_name": "sprint_id",
+                        "argument_value": "$$PREV[3]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "\"who_am_i\" determines my user ID, \"works_list\" fetches my tasks involving part 'CAPL-321', and \"prioritize_objects\" orders them. The top tasks are added to my sprint with \"add_work_items_to_sprint\" post-identification of the sprint via \"get_sprint_id\"."
+    },
+    {
+        "Query": "I'd like to create a detailed report of the most critical upcoming tasks owned by 'DEVU-456' for review in tomorrow's management meeting.",
+        "Output": [
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "owned_by",
+                        "argument_value": ["DEVU-456"]
+                    },
+                    {
+                        "argument_name": "type",
+                        "argument_value": ["task"]
+                    },
+                    {
+                        "argument_name": "issue.priority",
+                        "argument_value": ["p0"]
+                    }
+                ]
+            },
+            {
+                "tool_name": "summarize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[0]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "The \"works_list\" tool filters the tasks owned by 'DEVU-456' that are most crucial, and \"summarize_objects\" creates a summary for a high-level overview for management deliberation."
+    },
+
+    {
+        "Query": "As a team lead, I need to create a list of high-priority tickets that require immediate response and summarize these for a quick review in the next meeting.",
+        "Output": [
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "ticket.needs_response",
+                        "argument_value": true
+                    },
+                    {
+                        "argument_name": "ticket.severity",
+                        "argument_value": ["blocker"]
+                    },
+                    {
+                        "argument_name": "type",
+                        "argument_value": ["ticket"]
+                    }
+                ]
+            },
+            {
+                "tool_name": "summarize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[0]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "The \"works_list\" tool is used first to filter the system for tickets that are of the highest severity and require a response. This specific subset of data is critical for the meeting. The resulting tickets from \"works_list\" are then passed to \"summarize_objects\" to succinctly prepare them for review, making information delivery more efficient during the meeting."
+    },
+    {
+        "Query": "I need to identify high-priority enhancement requests related to part 'FEAT-123' and add them to the current sprint for implementation.",
+        "Output": [
+            {
+                "tool_name": "get_sprint_id",
+                "arguments": []
+            },
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "applies_to_part",
+                        "argument_value": ["FEAT-123"]
+                    },
+                    {
+                        "argument_name": "issue.priority",
+                        "argument_value": ["p0"]
+                    },
+                    {
+                        "argument_name": "type",
+                        "argument_value": ["issue"]
+                    }
+                ]
+            },
+            {
+                "tool_name": "add_work_items_to_sprint",
+                "arguments": [
+                    {
+                        "argument_name": "work_ids",
+                        "argument_value": "$$PREV[1]"
+                    },
+                    {
+                        "argument_name": "sprint_id",
+                        "argument_value": "$$PREV[0]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "To prioritize work effectively, \"get_sprint_id\" is called first to obtain the current sprint's ID. Next, \"works_list\" filters for the high-priority issues related to the specified part, which are candidates for the sprint. Finally, \"add_work_items_to_sprint\" adds the filtered work items to the current sprint using the IDs obtained from the previous steps."
+    },
+    {
+        "Query": "I want to create a task list from the transcript of today's team meeting to ensure all action items are tracked.",
+        "Output": [
+            {
+                "tool_name": "create_actionable_tasks_from_text",
+                "arguments": [
+                    {
+                        "argument_name": "text",
+                        "argument_value": "Today's meeting notes..."
+                    }
+                ]
+            },
+            {
+                "tool_name": "prioritize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[0]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "To effectively convert meeting notes into a task list, \"create_actionable_tasks_from_text\" is used to parse the transcript text and generate tasks. These tasks may be numerous, so \"prioritize_objects\" is then used to sort them by priority, ensuring that the most critical items are addressed first. The transcript text is provided directly in the argument."
+    },
+
+    {
+        "Query": "As a product owner, I need to find the current sprint's items related to customer 'ACME Corp' and provide a summary for the client's quarterly review.",
+        "Output": [
+            {
+                "tool_name": "get_sprint_id",
+                "arguments": []
+            },
+            {
+                "tool_name": "search_object_by_name",
+                "arguments": [
+                    {
+                        "argument_name": "query",
+                        "argument_value": "ACME Corp"
+                    }
+                ]
+            },
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "sprint_id",
+                        "argument_value": "$$PREV[0]"
+                    },
+                    {
+                        "argument_name": "applies_to_part",
+                        "argument_value": "$$PREV[1]"
+                    }
+                ]
+            },
+            {
+                "tool_name": "summarize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[2]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "To find work items for a specific customer in the current sprint, we start with \"get_sprint_id\" to identify the current sprint. Then, \"search_object_by_name\" is used to match the customer's name to a system object ID. With both the sprint ID and the customer's object ID, \"works_list\" retrieves the relevant work items. Finally, \"summarize_objects\" is used to create a summary of these items for the client's review."
+    },
+    {
+        "Query": "I need to identify the non-urgent tickets created by 'DEVU-456' for a performance review and then prioritize these based on internal priority guidelines.",
+        "Output": [
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "created_by",
+                        "argument_value": ["DEVU-456"]
+                    },
+                    {
+                        "argument_name": "ticket.severity",
+                        "argument_value": ["low", "medium"]
+                    },
+                    {
+                        "argument_name": "type",
+                        "argument_value": ["ticket"]
+                    }
+                ]
+            },
+            {
+                "tool_name": "prioritize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[0]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "The \"works_list\" tool first filters tickets created by the specified user that are non-urgent (low to medium severity). The resulting list may still be lengthy and unorganized. The \"prioritize_objects\" tool then sorts these tickets based on the internal priority metrics, aiding in a focused performance review."
+    },
+    {
+        "Query": "For upcoming sprint planning, I want to gather all tasks from the 'development' stage and summarize them to facilitate discussion of progress and roadblocks.",
+        "Output": [
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "stage.name",
+                        "argument_value": ["development"]
+                    },
+                    {
+                        "argument_name": "type",
+                        "argument_value": ["task"]
+                    }
+                ]
+            },
+            {
+                "tool_name": "summarize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[0]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "To effectively plan the next sprint, it is important to understand the current status of tasks. \"works_list\" filters tasks that are in the 'development' stage. Then, \"summarize_objects\" provides a clear summary of these tasks, making it easier to discuss them in terms of progress and any challenges faced during the sprint planning meeting."
+    },
+
+    {
+        "Query": "As part of quality assurance, I need to find and summarize all p2 and p3 issues that were reported via 'email' for our 'QA' Rev organization.",
+        "Output": [
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "issue.priority",
+                        "argument_value": ["p2", "p3"]
+                    },
+                    {
+                        "argument_name": "ticket.source_channel",
+                        "argument_value": ["email"]
+                    },
+                    {
+                        "argument_name": "issue.rev_orgs",
+                        "argument_value": ["QA"]
+                    }
+                ]
+            },
+            {
+                "tool_name": "summarize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[0]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "Quality assurance processes require sorting issues by priority and source channel to manage them effectively. First, the \"works_list\" tool filters for issues of lower priorities (p2, p3) reported via email for a specific Rev organization. The \"summarize_objects\" tool then presents these results in a concise format that is easy to discuss and act upon by QA personnel."
+    },
+    {
+        "Query": "I want to prep for a strategic meeting by summarizing high-priority work items owned by me that need responses and are associated with organization 'REV-321'.",
+        "Output": [
+            {
+                "tool_name": "who_am_i",
+                "arguments": []
+            },
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "owned_by",
+                        "argument_value": "$$PREV[0]"
+                    },
+                    {
+                        "argument_name": "ticket.needs_response",
+                        "argument_value": "true"
+                    },
+                    {
+                        "argument_name": "ticket.rev_org",
+                        "argument_value": ["REV-321"]
+                    },
+                    {
+                        "argument_name": "ticket.severity",
+                        "argument_value": ["blocker", "high"]
+                    }
+                ]
+            },
+            {
+                "tool_name": "summarize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[1]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "Ahead of a strategic meeting, it is crucial to provide a briefing on critical items. The \"who_am_i\" tool identifies the user's ID, which is then used with \"works_list\" to select high-severity work items owned by the user that are pending response for a specific organization. The output list is then input into \"summarize_objects\" to create a clear report on these items for the meeting."
+    },
+    {
+        "Query": "I need to find tasks that need to be actioned from a project update email and add them to the current sprint.",
+        "Output": [
+            {
+                "tool_name": "create_actionable_tasks_from_text",
+                "arguments": [
+                    {
+                        "argument_name": "text",
+                        "argument_value": "Here's the latest project update..."
+                    }
+                ]
+            },
+            {
+                "tool_name": "get_sprint_id",
+                "arguments": []
+            },
+            {
+                "tool_name": "add_work_items_to_sprint",
+                "arguments": [
+                    {
+                        "argument_name": "work_ids",
+                        "argument_value": "$$PREV[0]"
+                    },
+                    {
+                        "argument_name": "sprint_id",
+                        "argument_value": "$$PREV[1]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "After receiving an email with a project update, it is necessary to convert any actionable insights into tasks. The \"create_actionable_tasks_from_text\" tool does this. To ensure these tasks are tracked and addressed in an organized manner, the \"get_sprint_id\" tool provides the current sprint ID. Finally, \"add_work_items_to_sprint\" allows for associating these tasks with the sprint for execution."
+    },    
+
+    {
+        "Query": "To kick off the day, I need to prioritize my tasks and issues and create a processed list of both, sorted by priority, that fall under my ownership in the system.",
+        "Output": [
+            {
+                "tool_name": "who_am_i",
+                "arguments": []
+            },
+            {
+                "tool_name": "works_list",
+                "arguments": [
+                    {
+                        "argument_name": "owned_by",
+                        "argument_value": "$$PREV[0]"
+                    },
+                    {
+                        "argument_name": "type",
+                        "argument_value": ["task", "issue"]
+                    }
+                ]
+            },
+            {
+                "tool_name": "prioritize_objects",
+                "arguments": [
+                    {
+                        "argument_name": "objects",
+                        "argument_value": "$$PREV[1]"
+                    }
+                ]
+            }
+        ],
+        "Reasoning": "To effectively organize the day's work for an individual, it's important to know the user's ID and their tasks and issues. The \"who_am_i\" tool retrieves the user ID, which is used by \"works_list\" to filter tasks and issues owned by the user. The filtered list is then sorted by priority using \"prioritize_objects,\" thus creating a focused and actionable to-do list for the user to begin their day."
+    }
+]

@@ -1,0 +1,1 @@
+python run.py --from_pretrained google/t5-v1_1-base --dataset svamp --model_type task_prefix --label_type llm --llm gpt4 --alpha 0.5 --batch_size 8
