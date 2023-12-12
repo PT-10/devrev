@@ -1,6 +1,6 @@
 from schema import step_1, step_2, step_3
 from openai import OpenAI
-from config import key
+from interface.config import key
 
 
 GPT_model = "gpt-3.5-turbo-1106"
