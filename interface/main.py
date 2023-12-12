@@ -4,12 +4,7 @@ from schema import tool_info
 
 
 def reset_history(tool_info):
-    global history_openai_format
     global agent_system
-    history_openai_format = [{
-        'role': 'system',
-        'content': agent_system
-    }]
     agent_system = f"""
 You are a function calling agent.You will be given a query.\
 If the query is not relevant to the tools, return an empty python list.\
@@ -19,7 +14,7 @@ The functions are given below in JSON format.\
 
 {tool_info}
 """
-
+    
 
 def predict(message, history):
     history_openai_format = [{
@@ -48,7 +43,7 @@ def predict(message, history):
         }
     )
     response = CoT_Prompting(history_openai_format)
-
+    # print(history_openai_format)
     partial_message = ""
     for chunk in response:
         if chunk is not None:
