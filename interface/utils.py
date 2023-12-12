@@ -1,4 +1,4 @@
-from schema import step_1, step_2, step_3
+from schema import step_2, step_3
 from openai import OpenAI
 from config import key
 
@@ -29,15 +29,15 @@ def CoT_Prompting(history):
         {'role': 'assistant',
          'content': f"{response}"}
     )
-    current.append(
-        {'role': 'user',
-         'content': f"{step_1}"}
-    )
-    response_1 = get_completion_from_messages(current)
-    current.append(
-        {'role': 'assistant',
-         'content': f"{response_1}"}
-    )
+    # current.append(
+    #     {'role': 'user',
+    #      'content': f"{step_1}"}
+    # )
+    # response_1 = get_completion_from_messages(current)
+    # current.append(
+    #     {'role': 'assistant',
+    #      'content': f"{response_1}"}
+    # )
     current.append(
         {'role': 'user',
          'content': f"{step_2}"}
