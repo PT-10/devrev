@@ -14,6 +14,7 @@ class Argument:
     def set_example(self, example):
         self.arg_example = example
 
+
 class Tool:
     def __init__(self, name):
         self.tool_name = name
@@ -22,7 +23,3 @@ class Tool:
 
     def add_description(self, desc):
         self.desc = desc
-
-
-
-

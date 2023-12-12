@@ -2,11 +2,12 @@ from schema import agent_system
 from utils import CoT_Prompting
 from schema import tool_info
 
+
 def reset_history(tool_info):
     global history_openai_format
     global agent_system
     history_openai_format = [{
-        'role': 'system', 
+        'role': 'system',
         'content': agent_system
     }]
     agent_system = f"""
@@ -22,27 +23,27 @@ The functions are given below in JSON format.\
 
 def predict(message, history):
     history_openai_format = [{
-                'role': 'system', 
+        'role': 'system',
                 'content': agent_system
-            }]
+    }]
     for human, assistant in history:
         history_openai_format.append(
             {
-                "role": "user",     
+                "role": "user",
                 "content": human
             }
         )
-        
+
         history_openai_format.append(
             {
-                "role": "assistant", 
+                "role": "assistant",
                 "content": assistant
             }
         )
 
     history_openai_format.append(
         {
-            "role": "user", 
+            "role": "user",
             "content": message
         }
     )
